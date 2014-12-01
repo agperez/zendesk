@@ -1,0 +1,103 @@
+ticket:
+  #<ZendeskAPI::Trackie
+    assignee_id=425632475
+    collaborator_ids=[428467495]
+    created_at=2014-11-28 23:57:15 UTC
+    custom_fields=[
+      #<ZendeskAPI::Trackie
+        id=23343365 value="account_basics__plans___pricing">,
+      #<ZendeskAPI::Trackie
+        id=23381279 value="">,
+      #<ZendeskAPI::Trackie
+        id=23368775 value=nil>,
+      #<ZendeskAPI::Trackie
+        id=22455799 value="prospector">]
+    description="Hi\n\nI am
+      trying to get a list Insurace Industry prosepects in Georgia and not able to add
+      the complete list due to restriction of your software.\n\nAppreciate if you can
+      let me know what will be the next step to access or add to my prospects list the
+      entire list found in the search from the Salesloft
+      site.\n\nThanks,\n\nSekhar\n\nSekhar Rudra\n\nSAP, Products,Accenture\n\nCell#
+      706-289-6988\n\nMML: Presenter
+      (https://www.livemeeting.com/cc/bsnconnect/join?id=8FPQ5M&role=present&pw=9z%3Ef27xFn) /
+      Attendee
+      (https://www.livemeeting.com/cc/bsnconnect/join?id=8FPQ5M&role=attend&pw=gM%2F7x%5CR%2C3)\n\n--------\n\nThis
+      message is for the designated recipient only and may contain privileged,
+      proprietary, or otherwise confidential information. If you have received it in
+      error, please notify the sender immediately and delete the original. Any other
+      use of the e-mail by you is prohibited. Where allowed by local law, electronic
+      communications with Accenture and its affiliates, including e-mail and instant
+      messaging (including content), may be scanned by our systems for the purposes of
+      information security and assessment of internal compliance with Accenture
+      policy.\n______________________________________________________________________________________\n\nwww.accenture.com"
+    due_at=nil
+    external_id=nil
+    fields=[
+      #<ZendeskAPI::Trackie id=23343365 value="account_basics__plans___pricing">,
+      #<ZendeskAPI::Trackie id=23381279 value="">,
+      #<ZendeskAPI::Trackie id=23368775 value=nil>,
+      #<ZendeskAPI::Trackie id=22455799 value="prospector">]
+    forum_topic_id=nil
+    group_id=22021495
+    has_incidents=false
+    id=604
+    metric_set=#<ZendeskAPI::Trackie
+      agent_wait_time_in_minutes=#<ZendeskAPI::Trackie
+        business=0
+        calendar=0>
+      assigned_at=2014-11-29 00:59:02 UTC
+      assignee_stations=1
+      assignee_updated_at=2014-11-29 00:59:02 UTC
+      created_at=2014-11-28 23:57:15 UTC
+      first_resolution_time_in_minutes=#<ZendeskAPI::Trackie
+        business=0
+        calendar=62>
+      full_resolution_time_in_minutes=#<ZendeskAPI::Trackie
+        business=0
+        calendar=62>
+      group_stations=1
+      id=599874015
+      initially_assigned_at=2014-11-29 00:59:02 UTC
+      latest_comment_added_at=2014-11-29 00:59:02 UTC
+      on_hold_time_in_minutes=#<ZendeskAPI::Trackie
+        business=0
+        calendar=0>
+      reopens=0
+      replies=1
+      reply_time_in_minutes=#<ZendeskAPI::Trackie
+        business=0
+        calendar=62>
+      requester_updated_at=2014-11-28 23:57:15 UTC
+      requester_wait_time_in_minutes=#<ZendeskAPI::Trackie
+        business=0
+        calendar=62>
+      solved_at=2014-11-29 00:59:02 UTC
+      status_updated_at=2014-11-29 00:59:02 UTC
+      ticket_id=604
+      updated_at=2014-11-29 00:59:03 UTC
+      url="https://salesloft.zendesk.com/api/v2/ticket_metrics/599874015.json">
+    organization_id=nil
+    priority=nil
+    problem_id=nil
+    raw_subject="Insurance Industry list"
+    recipient="support@salesloft.com"
+    requester_id=428467475
+    satisfaction_rating=#<ZendeskAPI::Trackie score="unoffered">
+    sharing_agreement_ids=[]
+    status="solved"
+    subject="Insurance Industry list"
+    submitter_id=428467475
+    tags=["account_basics__plans___pricing", "prospector"]
+    type=nil
+    updated_at=2014-11-29 00:59:03 UTC
+    url="https://salesloft.zendesk.com/api/v2/tickets/604.json"
+    via=#<ZendeskAPI::Trackie
+      channel="email"
+      source=#<ZendeskAPI::Trackie
+        from=#<ZendeskAPI::Trackie
+          address="sekhar.rudra@accenture.com"
+          name="Sekhar Rudra">
+        rel=nil
+        to=#<ZendeskAPI::Trackie
+          address="support@salesloft.com"
+          name="SalesLoft">>>>
