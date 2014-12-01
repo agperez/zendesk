@@ -3,7 +3,9 @@ Rails.application.routes.draw do
 
   root 'static#home'
 
-  match '/audits', to: 'static#audits', via: 'get' 
+  match '/audits', to: 'static#audits', via: 'get'
+  match '/refresh', to: 'tickets#refresh', via: 'get'
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
