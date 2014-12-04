@@ -10,7 +10,7 @@ class UsersController < ApplicationController
       user = User.find_or_initialize_by(zenid: u.id)
       user.update(name: u.name, email: u.email)
     end
-    redirect_to users_path
+    redirect_to this_month_path
   end
 
   def show

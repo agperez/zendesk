@@ -3,7 +3,7 @@ Rails.application.routes.draw do
 
   resources :tickets
 
-  root 'static#home'
+  root 'tickets#this_month'
 
   match '/audits', to: 'static#audits', via: 'get'
   match '/tickets_refresh', to: 'tickets#refresh', via: 'get'

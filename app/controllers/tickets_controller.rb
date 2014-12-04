@@ -41,27 +41,43 @@ class TicketsController < ApplicationController
                      user_id: @user.id, originally_created: originally_created,
                      originally_closed: originally_solved, replies: t.metric_set.replies)
     end
-    redirect_to tickets_path
+    redirect_to this_month_path
   end
 
   def this_month
     #Avg Reply Time (Time til first response)
     #Avg Close Time
     #Total nubmer of Prospector Tickets
-    @tickets = Ticket.where("opened > ? AND product = ?", Time.now.beginning_of_month, "prospector")
+    @prospector_tix = Ticket.where("opened > ? AND product = ?", Time.now.beginning_of_month, "prospector")
+    @cadence_tix    = Ticket.where("opened > ? AND product = ?", Time.now.beginning_of_month, "cadence")
+
     first_sum = 0
     close_sum = 0
     i=0
-    @tickets.each do |t|
+    @prospector_tix.each do |t|
       if t.closed_time && t.reply_time
         close_sum += t.closed_time
         first_sum += t.reply_time
         i+=1
       end
     end
-    @total_closed = i
-    @first_avg = first_sum.to_f / i
-    @close_avg = close_sum.to_f / i
+    @pro_total_closed = i
+    @pro_first_avg = first_sum.to_f / i
+    @pro_close_avg = close_sum.to_f / i
+
+    cad_first_sum = 0
+    cad_close_sum = 0
+    cad_i=0
+    @cadence_tix.each do |t|
+      if t.closed_time && t.reply_time
+        cad_close_sum += t.closed_time
+        cad_first_sum += t.reply_time
+        cad_i+=1
+      end
+    end
+    @cad_total_closed = cad_i
+    @cad_first_avg = cad_first_sum.to_f / cad_i
+    @cad_close_avg = cad_close_sum.to_f / cad_i
   end
 
   def show
