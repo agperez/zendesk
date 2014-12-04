@@ -1,13 +1,1 @@
-
-<br>
-ALL PROSPECTOR TICKETS (total <%= @i %>):<br>
-<% @tickets.each do |t| %>
-  Ticket ID: <%= t.id %> <br>
-  Created at: <%= t.created_at.in_time_zone('Eastern Time (US & Canada)') %> <br>
-  <% t.custom_fields.each do |cf| %>
-    <% if cf.id == 22455799 %>
-      ID: <%= cf.id %>, Value: <%= cf.value %><br>
-    <% end %>
-  <% end %>
-  <br>
-<% end %>
+Hello!
