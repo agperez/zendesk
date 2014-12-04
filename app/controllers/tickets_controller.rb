@@ -8,13 +8,20 @@ class TicketsController < ApplicationController
 
   def refresh
     client.tickets.include(:metric_sets).all do |t|
-      solved = t.metric_set.solved_at
-      created = t.metric_set.created_at
+      zenid = t.assignee_id
+      if zenid
+        @user = User.find_or_create_by(zenid: zenid)
+      end
+      originally_solved = t.metric_set.solved_at.in_time_zone('Eastern Time (US & Canada)') if t.metric_set.solved_at
+      originally_created = t.metric_set.created_at.in_time_zone('Eastern Time (US & Canada)') if t.metric_set.created_at
+      solved = business_time(originally_solved) if originally_solved
+      created = business_time(originally_created) if originally_created
+
       product = ""
       closed_time = 0
 
-      if solved
-        closed_time = time_diff(created, solved)
+      if solved and created < solved
+        closed_time = closing_time(created, solved)
       end
 
       t.custom_fields.each do |c|
@@ -23,36 +30,39 @@ class TicketsController < ApplicationController
         end
       end
 
-      @ticket = Ticket.find_or_initialize_by(zenid: t.id)
+      first_assigned = t.metric_set.initially_assigned_at.in_time_zone('Eastern Time (US & Canada)') if t.metric_set.initially_assigned_at
 
-      @ticket.update(opened: created, closed: solved,
-                     first_assigned: t.metric_set.initially_assigned_at,
-                     reply_time: t.metric_set.reply_time_in_minutes.calendar,
-                     agent: t.assignee_id, product: product, closed_time: closed_time)
+      ticket = Ticket.find_or_initialize_by(zenid: t.id)
+
+      ticket.update(opened: created, closed: solved,
+                     first_assigned: first_assigned,
+                     reply_time: t.metric_set.reply_time_in_minutes.business,
+                     agent: t.assignee_id, product: product, closed_time: closed_time,
+                     user_id: @user.id, originally_created: originally_created,
+                     originally_closed: originally_solved, replies: t.metric_set.replies)
     end
     redirect_to tickets_path
   end
 
-  #@ticket = Ticket.new
-  #@ticket.zenid          = t.id
-  # @ticket.opened         = created
-  # @ticket.closed         = solved
-  # @ticket.first_assigned = t.metric_set.initially_assigned_at
-  # @ticket.reply_time     = t.metric_set.reply_time_in_minutes.calendar
-  # @ticket.assignee       = t.assignee_id
-  # if solved
-  #   @ticket.closed_time  = time_diff(created, solved)
-  # end
-  # t.custom_fields.each do |c|
-  #   if c.id == 22455799
-  #     @ticket.product    = c.value
-  #   end
-  # end
-  # if @ticket.save
-  #   redirect_to ticket_path(@ticket)
-  # else
-  #   redirect_to tickets_path
-  # end
+  def this_month
+    #Avg Reply Time (Time til first response)
+    #Avg Close Time
+    #Total nubmer of Prospector Tickets
+    @tickets = Ticket.where("opened > ? AND product = ?", Time.now.beginning_of_month, "prospector")
+    first_sum = 0
+    close_sum = 0
+    i=0
+    @tickets.each do |t|
+      if t.closed_time && t.reply_time
+        close_sum += t.closed_time
+        first_sum += t.reply_time
+        i+=1
+      end
+    end
+    @total_closed = i
+    @first_avg = first_sum.to_f / i
+    @close_avg = close_sum.to_f / i
+  end
 
   def show
   end
@@ -105,6 +115,8 @@ class TicketsController < ApplicationController
 
     def ticket_params
       params.require(:ticket).permit(:zenid, :opened, :closed, :first_assigned, :closed_time,
-                                     :reply_time, :product, :agent)
+                                     :reply_time, :product, :agent, :replies, :user_id)
     end
+
+
 end

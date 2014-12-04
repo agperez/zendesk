@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141201192227) do
+ActiveRecord::Schema.define(version: 20141203231400) do
 
   create_table "tickets", force: true do |t|
     t.integer  "zenid"
@@ -24,8 +24,23 @@ ActiveRecord::Schema.define(version: 20141201192227) do
     t.string   "agent"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "user_id"
+    t.datetime "originally_created"
+    t.datetime "originally_closed"
+    t.integer  "replies"
   end
 
+  add_index "tickets", ["user_id"], name: "index_tickets_on_user_id"
   add_index "tickets", ["zenid"], name: "index_tickets_on_zenid"
+
+  create_table "users", force: true do |t|
+    t.integer  "zenid"
+    t.string   "name"
+    t.string   "email"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "users", ["zenid"], name: "index_users_on_zenid"
 
 end

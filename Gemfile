@@ -13,6 +13,7 @@ gem 'spring',        group: :development
 
 
 #AP gems
-gem "zendesk_api"
+gem 'zendesk_api'
 gem 'pry'
 gem 'figaro'
+gem 'holidays'

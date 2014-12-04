@@ -1,0 +1,15 @@
+<div class="monthly count"><%= @tickets.count %></div>
+<div class="monthly count_title">New Tickets</div>
+<div class="monthly count_sub"><%= @total_closed %> Closed</div>
+
+<br>
+<br>
+<div class="monthly count"><%= @first_avg.round(2) %></div>
+<div class="monthly count_title">Average First Response</div>
+<div class="monthly count_sub"></div>
+
+<br>
+<br>
+<div class="monthly count"><%= @close_avg.round(2) %></div>
+<div class="monthly count_title">Average Time to Close</div>
+<div class="monthly count_sub"></div>
