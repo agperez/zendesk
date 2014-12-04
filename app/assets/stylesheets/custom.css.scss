@@ -4,7 +4,9 @@
 @-o-viewport        { width: device-width; }
 @viewport           { width: device-width; }
 
-
+body {
+  line-height: normal;
+}
 .monthly_title {
   font-size: 8em;
   text-align: center;
