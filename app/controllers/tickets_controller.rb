@@ -6,6 +6,16 @@ class TicketsController < ApplicationController
     @tickets = Ticket.all
   end
 
+  def test
+    @ids = []
+    client.search(:query => "type:ticket created>#{(Time.now-1.days).strftime("%Y-%m-%d")}").each do |t|
+      @ids << t.id
+    end
+    @ids_sanitized = @ids.map(&:inspect).join(', ')
+    @tickets = client.tickets.show_many(:ids => @ids_sanitized).include(:metric_sets)
+
+  end
+
   def refresh
     client.tickets.include(:metric_sets).all do |t|
       zenid = t.assignee_id

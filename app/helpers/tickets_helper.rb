@@ -3,6 +3,41 @@ require 'holidays/us'
 
 module TicketsHelper
 
+  def import_ticket(t)
+    zenid = t.assignee_id
+    if zenid
+      @user = User.find_or_create_by(zenid: zenid)
+    end
+    originally_solved = t.metric_set.solved_at.in_time_zone('Eastern Time (US & Canada)') if t.metric_set.solved_at
+    originally_created = t.metric_set.created_at.in_time_zone('Eastern Time (US & Canada)') if t.metric_set.created_at
+    solved = business_time(originally_solved) if originally_solved
+    created = business_time(originally_created) if originally_created
+
+    product = ""
+    closed_time = 0
+
+    if solved and created < solved
+      closed_time = closing_time(created, solved)
+    end
+
+    t.custom_fields.each do |c|
+      if c.id == 22455799
+        product = c.value
+      end
+    end
+
+    first_assigned = t.metric_set.initially_assigned_at.in_time_zone('Eastern Time (US & Canada)') if t.metric_set.initially_assigned_at
+
+    ticket = Ticket.find_or_initialize_by(zenid: t.id)
+
+    ticket.update(opened: created, closed: solved,
+                    first_assigned: first_assigned,
+                    reply_time: t.metric_set.reply_time_in_minutes.business,
+                    agent: t.assignee_id, product: product, closed_time: closed_time,
+                    user_id: @user.id, originally_created: originally_created,
+                    originally_closed: originally_solved, replies: t.metric_set.replies)
+  end
+
   def business_time(datetime)
     day = datetime.strftime("%A")
     hour = datetime.strftime("%H").to_i
