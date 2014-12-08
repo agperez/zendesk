@@ -6,55 +6,26 @@ class TicketsController < ApplicationController
     @tickets = Ticket.all
   end
 
-  def test
-    @ids = []
+  def refresh_day
+    ids = []
     client.search(:query => "type:ticket created>#{(Time.now-1.days).strftime("%Y-%m-%d")}").each do |t|
-      @ids << t.id
+      ids << t.id
     end
-    @ids_sanitized = @ids.map(&:inspect).join(', ')
-    @tickets = client.tickets.show_many(:ids => @ids_sanitized).include(:metric_sets)
-
+    ids_sanitized = ids.map(&:inspect).join(', ')
+    client.tickets.show_many(:ids => ids_sanitized).include(:metric_sets).each do |t|
+      import_ticket(t)
+    end
+    redirect_to month_path
   end
 
   def refresh
     client.tickets.include(:metric_sets).all do |t|
-      zenid = t.assignee_id
-      if zenid
-        @user = User.find_or_create_by(zenid: zenid)
-      end
-      originally_solved = t.metric_set.solved_at.in_time_zone('Eastern Time (US & Canada)') if t.metric_set.solved_at
-      originally_created = t.metric_set.created_at.in_time_zone('Eastern Time (US & Canada)') if t.metric_set.created_at
-      solved = business_time(originally_solved) if originally_solved
-      created = business_time(originally_created) if originally_created
-
-      product = ""
-      closed_time = 0
-
-      if solved and created < solved
-        closed_time = closing_time(created, solved)
-      end
-
-      t.custom_fields.each do |c|
-        if c.id == 22455799
-          product = c.value
-        end
-      end
-
-      first_assigned = t.metric_set.initially_assigned_at.in_time_zone('Eastern Time (US & Canada)') if t.metric_set.initially_assigned_at
-
-      ticket = Ticket.find_or_initialize_by(zenid: t.id)
-
-      ticket.update(opened: created, closed: solved,
-                     first_assigned: first_assigned,
-                     reply_time: t.metric_set.reply_time_in_minutes.business,
-                     agent: t.assignee_id, product: product, closed_time: closed_time,
-                     user_id: @user.id, originally_created: originally_created,
-                     originally_closed: originally_solved, replies: t.metric_set.replies)
+      import_ticket(t)
     end
-    redirect_to this_month_path
+    redirect_to month_path
   end
 
-  def this_month
+  def month
     #Avg Reply Time (Time til first response)
     #Avg Close Time
     #Total nubmer of Prospector Tickets
