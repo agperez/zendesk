@@ -1,0 +1,2 @@
+module RefreshAuditsHelper
+end

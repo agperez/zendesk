@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  resources :refresh_audits
+
   resources :users
 
   resources :tickets
