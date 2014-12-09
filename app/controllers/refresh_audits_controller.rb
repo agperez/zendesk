@@ -69,6 +69,6 @@ class RefreshAuditsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def refresh_audit_params
-      params.require(:refresh_audit).permit(:type, :stamp)
+      params.require(:refresh_audit).permit(:period, :stamp)
     end
 end

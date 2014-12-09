@@ -15,6 +15,7 @@ class TicketsController < ApplicationController
     client.tickets.show_many(:ids => ids_sanitized).include(:metric_sets).each do |t|
       import_ticket(t)
     end
+    RefreshAudit.create(period: 'day', stamp: Time.now)
     redirect_to month_path
   end
 
@@ -22,6 +23,7 @@ class TicketsController < ApplicationController
     client.tickets.include(:metric_sets).all do |t|
       import_ticket(t)
     end
+    RefreshAudit.create(period: 'all', stamp: Time.now)
     redirect_to month_path
   end
 
@@ -31,6 +33,40 @@ class TicketsController < ApplicationController
     #Total nubmer of Prospector Tickets
     @prospector_tix = Ticket.where("opened > ? AND product = ?", Time.now.beginning_of_month, "prospector")
     @cadence_tix    = Ticket.where("opened > ? AND product = ?", Time.now.beginning_of_month, "cadence")
+    @audit          = RefreshAudit.where("period = ?", "day").order("stamp DESC").first.stamp
+    first_sum = 0
+    close_sum = 0
+    i=0
+    @prospector_tix.each do |t|
+      if t.closed_time && t.reply_time
+        close_sum += t.closed_time
+        first_sum += t.reply_time
+        i+=1
+      end
+    end
+    @pro_total_closed = i
+    @pro_first_avg = first_sum.to_f / i
+    @pro_close_avg = close_sum.to_f / i
+
+    cad_first_sum = 0
+    cad_close_sum = 0
+    cad_i=0
+    @cadence_tix.each do |t|
+      if t.closed_time && t.reply_time
+        cad_close_sum += t.closed_time
+        cad_first_sum += t.reply_time
+        cad_i+=1
+      end
+    end
+    @cad_total_closed = cad_i
+    @cad_first_avg = cad_first_sum.to_f / cad_i
+    @cad_close_avg = cad_close_sum.to_f / cad_i
+  end
+
+  def previous
+
+    @prospector_tix = Ticket.where("opened > ? AND product = ?", (Time.now - 1.month).beginning_of_month, "prospector")
+    @cadence_tix    = Ticket.where("opened > ? AND product = ?", (Time.now - 1.month).beginning_of_month, "cadence")
 
     first_sum = 0
     close_sum = 0
@@ -60,6 +96,7 @@ class TicketsController < ApplicationController
     @cad_first_avg = cad_first_sum.to_f / cad_i
     @cad_close_avg = cad_close_sum.to_f / cad_i
   end
+
 
   def show
   end

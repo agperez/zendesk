@@ -14,6 +14,10 @@ group :development do
   gem 'spring'
 end
 
+group :development, :test do
+  gem 'rspec-rails'
+end
+
 #AP gems
 gem 'zendesk_api'
 gem 'pry-rails'

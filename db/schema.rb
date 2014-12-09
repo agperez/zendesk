@@ -11,10 +11,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141209151954) do
+ActiveRecord::Schema.define(version: 20141209165950) do
 
   create_table "refresh_audits", force: true do |t|
-    t.string   "type"
+    t.string   "period"
     t.datetime "stamp"
     t.datetime "created_at"
     t.datetime "updated_at"

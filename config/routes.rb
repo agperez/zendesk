@@ -13,6 +13,7 @@ Rails.application.routes.draw do
   match '/month', to: 'tickets#month', via: 'get'
   match '/agents', to: 'tickets#agents', via: 'get'
   match '/refresh_day', to: 'tickets#refresh_day', via: 'get'
+  match '/previous', to: 'tickets#previous', via: 'get'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

@@ -39,14 +39,36 @@ body .container {
   margin-bottom: .8em;
 }
 
-.monthly_top_links, .monthly_top_links a {
+.monthly_top_links, .monthly_top_links a, .month_nav, .month_nav a {
   text-align: center;
   margin-bottom: 20px;
   color: darkgray;
+}
+
+.monthly_top_links, .monthly_top_links a {
   font-size: 23px;
 }
 
-.monthly_top_links a {
+.last_refresh {
+  font-size: 12px;
+}
+
+.month_nav, .month_nav a{
+  font-size: 18px;
+}
+
+.month_nav a {
+  border: solid 1px #A3A3A3;
+  padding: 7px;
+  border-radius: 8px;
+  background-color: darkgray;
+  color: white;
+  box-shadow: #999 1px 1px 2px;
+  font-family: Arvo;
+  font-size: 14px;
+}
+
+.monthly_top_links a, .month_nav a {
   &:hover {
     text-decoration: none;
   }
