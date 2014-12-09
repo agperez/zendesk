@@ -28,9 +28,7 @@ class TicketsController < ApplicationController
   end
 
   def month
-    #Avg Reply Time (Time til first response)
-    #Avg Close Time
-    #Total nubmer of Prospector Tickets
+
     @prospector_tix = Ticket.where("opened > ? AND product = ?", Time.now.beginning_of_month, "prospector")
     @cadence_tix    = Ticket.where("opened > ? AND product = ?", Time.now.beginning_of_month, "cadence")
     @audit          = RefreshAudit.where("period = ?", "day").order("stamp DESC").first.stamp
@@ -65,8 +63,8 @@ class TicketsController < ApplicationController
 
   def previous
 
-    @prospector_tix = Ticket.where("opened > ? AND product = ?", (Time.now - 1.month).beginning_of_month, "prospector")
-    @cadence_tix    = Ticket.where("opened > ? AND product = ?", (Time.now - 1.month).beginning_of_month, "cadence")
+    @prospector_tix = Ticket.where("opened >= ? AND opened <= ? AND product = ?", (Time.now - 1.month).beginning_of_month, (Time.now - 1.month).end_of_month, "prospector")
+    @cadence_tix    = Ticket.where("opened >= ? AND opened <= ? AND product = ?", (Time.now - 1.month).beginning_of_month, (Time.now - 1.month).end_of_month, "cadence")
 
     first_sum = 0
     close_sum = 0
@@ -151,6 +149,9 @@ class TicketsController < ApplicationController
       params.require(:ticket).permit(:zenid, :opened, :closed, :first_assigned, :closed_time,
                                      :reply_time, :product, :agent, :replies, :user_id)
     end
+
+    
+
 
 
 end
