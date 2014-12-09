@@ -12,7 +12,7 @@
 <%= render 'month_stats' %>
 
 <div class="monthly_top_links col-lg-12 col-md-12 col-sm-12 col-xs-12">
-  <%= link_to("Refresh Tickets", refresh_day_path, class: "refresh_link") %> | <%= link_to("Refresh Users", users_refresh_path) %>
+  <%= link_to("Refresh Tickets", refresh_day_path, class: "refresh_link") %> | <%= link_to("Refresh Users", users_refresh_path, class: "refresh_link") %>
   <div class="last_refresh">Last refreshed at: <%= @audit.strftime("%l:%M:%S%P - %B %d, %Y") %></div>
   <div><i id="monthly_loading" class="fa fa-spinner fa-spin" style="color:red; display: none;"></i></div>
 </div>
