@@ -6,15 +6,24 @@ class TicketsController < ApplicationController
     @tickets = Ticket.all
   end
 
+  def stats
+    stats = {
+      cadence_tickets: Ticket.in_month(month, "cadence")
+    }
+    format.json { render json: stats }
+  end
+
   def refresh_day
     ids = []
     client.search(:query => "type:ticket created>#{(Time.now-1.days).strftime("%Y-%m-%d")}").each do |t|
       ids << t.id
     end
+
     ids_sanitized = ids.map(&:inspect).join(', ')
     client.tickets.show_many(:ids => ids_sanitized).include(:metric_sets).each do |t|
       import_ticket(t)
     end
+
     RefreshAudit.create(period: 'day', stamp: Time.now)
     redirect_to month_path
   end
@@ -23,87 +32,21 @@ class TicketsController < ApplicationController
     client.tickets.include(:metric_sets).all do |t|
       import_ticket(t)
     end
+
     RefreshAudit.create(period: 'all', stamp: Time.now)
     redirect_to month_path
   end
 
   def month
-
-    @prospector_tix = Ticket.where("opened > ? AND product = ?", Time.now.beginning_of_month, "prospector")
-    @cadence_tix    = Ticket.where("opened > ? AND product = ?", Time.now.beginning_of_month, "cadence")
-    @audit          = RefreshAudit.where("period = ?", "day").order("stamp DESC").first.stamp
-    first_sum = 0
-    close_sum = 0
-    i=0
-    @prospector_tix.each do |t|
-      if t.closed_time && t.reply_time
-        close_sum += t.closed_time
-        first_sum += t.reply_time
-        i+=1
-      end
-    end
-    @pro_total_closed = i
-    @pro_first_avg = first_sum.to_f / i
-    @pro_close_avg = close_sum.to_f / i
-
-    cad_first_sum = 0
-    cad_close_sum = 0
-    cad_i=0
-    @cadence_tix.each do |t|
-      if t.closed_time && t.reply_time
-        cad_close_sum += t.closed_time
-        cad_first_sum += t.reply_time
-        cad_i+=1
-      end
-    end
-    @cad_total_closed = cad_i
-    @cad_first_avg = cad_first_sum.to_f / cad_i
-    @cad_close_avg = cad_close_sum.to_f / cad_i
+    make_month_view(Time.now, true)
   end
 
   def previous
-
-    @prospector_tix = Ticket.where("opened >= ? AND opened <= ? AND product = ?", (Time.now - 1.month).beginning_of_month, (Time.now - 1.month).end_of_month, "prospector")
-    @cadence_tix    = Ticket.where("opened >= ? AND opened <= ? AND product = ?", (Time.now - 1.month).beginning_of_month, (Time.now - 1.month).end_of_month, "cadence")
-
-    first_sum = 0
-    close_sum = 0
-    i=0
-    @prospector_tix.each do |t|
-      if t.closed_time && t.reply_time
-        close_sum += t.closed_time
-        first_sum += t.reply_time
-        i+=1
-      end
-    end
-    @pro_total_closed = i
-    @pro_first_avg = first_sum.to_f / i
-    @pro_close_avg = close_sum.to_f / i
-
-    cad_first_sum = 0
-    cad_close_sum = 0
-    cad_i=0
-    @cadence_tix.each do |t|
-      if t.closed_time && t.reply_time
-        cad_close_sum += t.closed_time
-        cad_first_sum += t.reply_time
-        cad_i+=1
-      end
-    end
-    @cad_total_closed = cad_i
-    @cad_first_avg = cad_first_sum.to_f / cad_i
-    @cad_close_avg = cad_close_sum.to_f / cad_i
-  end
-
-
-  def show
+    make_month_view(Time.now - 1.month, false)
   end
 
   def new
     @ticket = Ticket.new
-  end
-
-  def edit
   end
 
   def create
@@ -150,7 +93,39 @@ class TicketsController < ApplicationController
                                      :reply_time, :product, :agent, :replies, :user_id)
     end
 
-    
+    def make_month_view(month, audit)
+      @prospector_tix = Ticket.in_month(month, "prospector")
+      @cadence_tix    = Ticket.in_month(month, "cadence")
+      @audit          = RefreshAudit.last_refreshed("day") if audit == true
+
+      first_sum = 0
+      close_sum = 0
+      i=0
+      @prospector_tix.each do |t|
+        if t.closed_time && t.reply_time
+          close_sum += t.closed_time
+          first_sum += t.reply_time
+          i+=1
+        end
+      end
+      @pro_total_closed = i
+      @pro_first_avg = first_sum.to_f / i
+      @pro_close_avg = close_sum.to_f / i
+
+      cad_first_sum = 0
+      cad_close_sum = 0
+      cad_i=0
+      @cadence_tix.each do |t|
+        if t.closed_time && t.reply_time
+          cad_close_sum += t.closed_time
+          cad_first_sum += t.reply_time
+          cad_i+=1
+        end
+      end
+      @cad_total_closed = cad_i
+      @cad_first_avg = cad_first_sum.to_f / cad_i
+      @cad_close_avg = cad_close_sum.to_f / cad_i
+    end
 
 
 
